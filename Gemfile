@@ -5,6 +5,10 @@ ruby File.read('.ruby-version', mode: 'rb').chomp
 gem 'rack'
 gem "sinatra"
 
+group :development do
+  gem "webrick"
+end
+
 group :production do
 	gem "iodine"
 end
