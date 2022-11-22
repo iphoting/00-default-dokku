@@ -1,4 +1,4 @@
-FROM ruby:3.1.2-alpine
+FROM ruby:3.1.2-alpine AS builder
 
 RUN \
 	apk update && apk upgrade && \
@@ -11,10 +11,19 @@ RUN bundle config --global frozen 1
 WORKDIR /usr/src/app
 
 COPY Gemfile Gemfile.lock .ruby-version ./
-RUN gem install bundler
 ENV BUNDLER_WITHOUT="development test"
-RUN bundle install
+ENV BUNDLE_DEPLOYMENT="true"
+RUN gem install bundler && bundle install --no-cache
+RUN rm -rf vendor/bundle/ruby/*/cache/
 
-COPY . .
+FROM ruby:3.1.2-alpine
 
-CMD ["rackup"]
+WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app/vendor/ ./vendor/
+COPY Gemfile Gemfile.lock .ruby-version Procfile config.ru Dockerfile ./
+
+ENV BUNDLER_WITHOUT="development test"
+ENV BUNDLE_DEPLOYMENT="true"
+RUN gem install bundler && bundle install --no-cache
+
+CMD ["bundle", "exec", "rackup"]
