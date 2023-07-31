@@ -17,7 +17,9 @@ GEM
     webrick (1.7.0)
 
 PLATFORMS
+  aarch64-linux-musl
   arm-linux-musleabihf
+  arm64-darwin-22
   x86_64-darwin-21
   x86_64-linux
   x86_64-linux-musl
@@ -32,4 +34,4 @@ RUBY VERSION
    ruby 3.1.2p20
 
 BUNDLED WITH
-   2.3.7
+   2.4.6
