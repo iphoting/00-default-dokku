@@ -6,21 +6,20 @@ on:
       - master
       - dokku
       - "dokku**"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
-        with:
-          access_token: ${{ github.token }}
       - name: Cloning repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Push to dokku
-        uses: dokku/github-action@v1.3.0
+        uses: dokku/github-action@v1.4.0
         with:
           # specify `--force` as a flag for git pushes
           git_push_flags: '--force'
