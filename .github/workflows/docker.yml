@@ -20,7 +20,7 @@ jobs:
       - name: Wait for container to be ready
         run: |
           for i in $(seq 1 15); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9292/ 2>/dev/null)
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9292/ 2>/dev/null) || true
             if [ "$STATUS" = "410" ]; then
               echo "App is ready"
               exit 0
