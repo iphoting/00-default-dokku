@@ -15,7 +15,7 @@ jobs:
         run: docker build -t app .
 
       - name: Start container
-        run: docker run -d --name app -p 9292:9292 app bundle exec rackup -o 0.0.0.0
+        run: docker run -d --name app -p 9292:9292 app bundle exec puma -p 9292 -b tcp://0.0.0.0
 
       - name: Wait for container to be ready
         run: |
