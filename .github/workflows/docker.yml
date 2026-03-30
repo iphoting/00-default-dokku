@@ -15,16 +15,17 @@ jobs:
         run: docker build -t app .
 
       - name: Start container
-        run: docker run -d --name app -p 9292:9292 -e PORT=9292 app
+        run: docker run -d --name app -p 9292:9292 app bundle exec rackup -o 0.0.0.0
 
       - name: Wait for container to be ready
         run: |
           for i in $(seq 1 15); do
-            if curl -sf -o /dev/null -w "%{http_code}" http://localhost:9292/ 2>/dev/null | grep -q "410"; then
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9292/ 2>/dev/null)
+            if [ "$STATUS" = "410" ]; then
               echo "App is ready"
               exit 0
             fi
-            echo "Waiting... ($i)"
+            echo "Waiting... ($i) got: $STATUS"
             sleep 2
           done
           echo "App failed to become ready"
