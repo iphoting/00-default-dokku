@@ -1,29 +1,31 @@
-FROM ruby:3.1.2-alpine AS builder
+FROM ruby:3.4.9-slim AS builder
 
 RUN \
-	apk update && apk upgrade && \
-	apk --no-cache add build-base ruby-dev ruby-bundler && \
-	rm -rf /var/cache/apk/*
+	apt-get update && apt-get upgrade -y && \
+	apt-get install -y --no-install-recommends build-essential && \
+	rm -rf /var/lib/apt/lists/*
 
-# throw errors if Gemfile has been modified since Gemfile.lock
-RUN bundle config --global frozen 1
+RUN gem install bundler --no-document
 
 WORKDIR /usr/src/app
 
-COPY Gemfile Gemfile.lock .ruby-version ./
 ENV BUNDLER_WITHOUT="development test"
 ENV BUNDLE_DEPLOYMENT="true"
-RUN gem install bundler && bundle install --no-cache
-RUN rm -rf vendor/bundle/ruby/*/cache/
 
-FROM ruby:3.1.2-alpine
+COPY Gemfile Gemfile.lock .ruby-version ./
+RUN bundle install --no-cache && \
+	find vendor/bundle/ruby/*/gems/ -name "*.c" -delete && \
+	find vendor/bundle/ruby/*/gems/ -name "*.o" -delete
+
+FROM ruby:3.4.9-slim
+
+RUN gem install bundler --no-document
 
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/vendor/ ./vendor/
-COPY Gemfile Gemfile.lock .ruby-version Procfile config.ru Dockerfile ./
+COPY Gemfile Gemfile.lock .ruby-version Procfile config.ru ./
 
 ENV BUNDLER_WITHOUT="development test"
 ENV BUNDLE_DEPLOYMENT="true"
-RUN gem install bundler && bundle install --no-cache
 
 CMD ["bundle", "exec", "rackup"]
