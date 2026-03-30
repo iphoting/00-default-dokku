@@ -28,4 +28,4 @@ COPY Gemfile Gemfile.lock .ruby-version Procfile config.ru ./
 ENV BUNDLER_WITHOUT="development test"
 ENV BUNDLE_DEPLOYMENT="true"
 
-CMD ["bundle", "exec", "puma", "-p", "9292"]
+CMD ["bundle", "exec", "rackup"]

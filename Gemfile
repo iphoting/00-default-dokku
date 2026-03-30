@@ -3,6 +3,7 @@ ruby File.read('.ruby-version', mode: 'rb').chomp
 #ruby-gemset=00-default-dokku
 
 gem 'rack'
+gem 'rackup'
 gem "sinatra"
 
 group :development do
