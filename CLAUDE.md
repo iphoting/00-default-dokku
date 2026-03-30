@@ -14,7 +14,7 @@ well-formed error response instead of a Dokku splash page.
 |---|---|
 | Ruby version | 3.4.9 (see `.ruby-version`) |
 | Web framework | Sinatra |
-| Production server | Iodine (via Rack) |
+| Production server | Puma (via Rack) |
 | Development server | WEBrick (via Rack) |
 | Container base | `ruby:3.4.9-slim` (Debian) |
 
@@ -69,7 +69,7 @@ bundle install
 
 ```bash
 bundle exec rackup          # WEBrick on port 9292 (development)
-bundle exec iodine -p 9292  # Iodine (production-like)
+bundle exec puma            # Puma (production-like)
 ```
 
 Verify: `curl -o /dev/null -w "%{http_code}" http://localhost:9292/` should return `410`.
@@ -148,7 +148,7 @@ Examples: chore(deps): bump sinatra, ci: add smoke test timeout
 
 - This app intentionally has **no content** — its sole purpose is the 410 response.
   Do not add routes, templates, or assets.
-- The `Procfile` runs Iodine in production: `web: bundle exec iodine -p ${PORT}`.
+- The `Procfile` runs Puma in production: `web: bundle exec puma -p ${PORT}`.
   Dokku sets `$PORT` automatically.
 - Ruby version must match `.ruby-version` exactly. Use `rbenv` or `rvm` locally.
 - The smoke test CI expects **exactly HTTP 410**. Any change to the response code
