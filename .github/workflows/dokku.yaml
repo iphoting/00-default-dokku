@@ -31,6 +31,8 @@ jobs:
             ProxyCommand docker run --rm -i cloudflare/cloudflared:latest access ssh --hostname %h
             IdentityFile ~/.ssh/id_rsa
             StrictHostKeyChecking no
+            ServerAliveInterval 30
+            ServerAliveCountMax 20
           EOF
           git remote add dokku ssh://dokku@dokku-ssh.iphoting.cc/00-default-dokku
           git push dokku HEAD:master --force
